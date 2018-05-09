@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 from detect import detect_naive
 from classify import *
-#from preprocess import preprocess
+from preprocess import preprocess
 
 def grab_frame(cap):
     ret,frame = cap.read()
@@ -23,7 +23,7 @@ def main():
 	cap = cv2.VideoCapture(0)
 
 	im = plt.imshow(grab_frame(cap))
-	# plt.text(0,0,"item name")
+	txt = plt.text(0,0,"item name", fontsize=12)
 	# plt.ion()
 
 	box = Rectangle((1,1),1,1)
@@ -32,7 +32,7 @@ def main():
 	# scaled_im = cv2.resize(grab_frame(cap), (32,32))
 	# plt.imshow(scaled_im)
 
-	while True:
+	while plt.get_fignums():
 		curr = grab_frame(cap)
 		im.set_data(curr)
 		curr_gray = cv2.cvtColor(curr, cv2.COLOR_BGR2GRAY)
@@ -43,6 +43,7 @@ def main():
 
 
 		scaled_im = cv2.resize(curr[slice_x, slice_y], (299,299))
+		txt.set_text("hmmm")
 		# variations = preprocess(scaled_im)
 		#print(classify_array(scaled_im))
 
@@ -51,8 +52,15 @@ def main():
 	# plt.ioff()
 	# plt.show()
 
+def flowerTest():
+	img = cv2.imread('flwr.jpg',0)
+	plt.imshow(img)
+	draw_box(img)
+	box, slices = draw_box(img)
+	box.set_visible(True)
+	plt.show()
 
 if __name__ == "__main__":
-	# img = cv2.imread('flwr.jpg',0)
-	# draw_box(img)
+	# flowerTest()
 	main()
+
