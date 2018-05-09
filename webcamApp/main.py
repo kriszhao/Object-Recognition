@@ -33,9 +33,11 @@ def ft_process(curr, thresh):
 	x, y, w, h = cv2.boundingRect(contours[-1])
 	target=curr[y+2:y+h-2,x+2:x+w-2]
 
+	currentAxis = plt.gca()
 	rect = Rectangle((y+2, x+2),\
 	 h, w, linewidth=5, \
 	 edgecolor="red", fill=False)
+	currentAxis.add_patch(rect)
 
 	return rect, target
 
@@ -71,7 +73,7 @@ def saliency_then_classify(curr):
 	
 	# Classify
 	scaled_im = scale(cropped)
-	return classify_array(scaled_im)
+	return classify_array(scaled_im), box
 
 def main():
 	cap = cv2.VideoCapture(0)
@@ -89,11 +91,12 @@ def main():
 		im.set_data(curr)
 		box.set_visible(False)
 		pure_class = just_classify(curr)
-		print("Pure classification predicts this object is a " + pure_class)
-		# print("Classification with saliency predicts this object is a " + saliency_then_classify(curr))
-		print("\n")
-		txt.set_text(pure_class
+		sal_class, box = saliency_then_classify(curr)
 		box.set_visible(True)
+		print("Pure classification predicts this object is a " + pure_class)
+		print("Classification with saliency predicts this object is a " + sal_class)
+		print("\n")
+		txt.set_text(sal_class)
 
 
 		# scaled_im = cv2.resize(curr[slice_x, slice_y], (299,299))
