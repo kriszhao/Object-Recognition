@@ -37,9 +37,9 @@ def main():
 		box, obj = draw_box(curr_gray)
 		box.set_visible(True)
 
-		scaled_im = cv2.resize(obj, (299,299))
+		scaled_im = cv2.resize(obj, (32,32))
 		# variations = preprocess(scaled_im)
-		print(classify_array(scaled_im))
+		#print(classify_array(scaled_im))
 
 		plt.pause(0.2)
 
