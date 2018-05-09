@@ -15,7 +15,7 @@ def process(curr, thresh):
 	x, y, w, h = cv2.boundingRect(contours[-1])
 	target=curr[y+2:y+h-2,x+2:x+w-2]
 
-	rect = Rectangle((y+h-2, x+2),\
+	rect = Rectangle((x+2, y+2),\
 		w, h, linewidth=5, \
 		edgecolor="red", fill=False)
 

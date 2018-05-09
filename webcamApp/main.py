@@ -34,12 +34,12 @@ def saliency_then_classify(curr):
 	# Scale rectangle to original size
 	box.set_height(box.get_height() * scaleh)
 	box.set_width(box.get_width() * scalew)
-	box.set_x(box.get_x() * scaleh)
-	box.set_y(box.get_y() * scalew)
+	box.set_x(box.get_x() * scalew)
+	box.set_y(box.get_y() * scaleh)
 	
 	# Classify
 	scaled_im = scale(cropped)
-	return classify_array(scaled_im), box
+	return classify_array(scaled_im), box, cropped
 
 def main():
 	cap = cv2.VideoCapture(0)
@@ -54,16 +54,29 @@ def main():
 		im.set_data(curr)
 		box.set_visible(False)
 
-		pure_class = just_classify(curr)
-		sal_class, box = saliency_then_classify(curr)
-
+		# pure_class = just_classify(curr)
+		sal_class, box, cropped = saliency_then_classify(curr)
 		currentAxis.add_patch(box)
 		box.set_visible(True)
 
-		txt.set_text(pure_class)
+		txt.set_text(sal_class)
 
 		plt.pause(0.2)
 
+# def runex():
+# 	im = cv2.imread("./images/mouse.jpg")
+# 	img = plt.imshow(im)
+# 	currentAxis = plt.gca()
+# 	sal_class, box, cropped = saliency_then_classify(im)
+# 	currentAxis.add_patch(box)
+# 	txt = plt.text(0,0,sal_class, fontsize=12)
+# 	plt.show()
+# 	plt.imshow(cropped)
+# 	plt.show()
+
+
+
 if __name__ == "__main__":
+	# runex()
 	main()
 
