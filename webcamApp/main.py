@@ -6,21 +6,9 @@ from classify import *
 import numpy as np
 from saliency import *
 
-#from preprocess import preprocess
-
 def grab_frame(cap):
     ret,frame = cap.read()
     return cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)
-
-def draw_box(img):
-	gray, coor = detect_naive(img)
-	y, x = coor
-	currentAxis = plt.gca()
-	rect = Rectangle((x.start, y.start),\
-	 x.stop - x.start, y.stop - y.start, linewidth=5, \
-	 edgecolor="red", fill=False)
-	currentAxis.add_patch(rect)
-	return rect, coor
 
 def scale(curr):
 	resized = cv2.resize(curr, (299,299))
@@ -34,8 +22,20 @@ def just_classify(curr):
 	return classify_array(scaled_im)
 
 def saliency_then_classify(curr):
+	# Scale factors
+	ch, cw, _ = curr.shape
+	sh, sw = (100, 100)
+	scaleh, scalew = ((ch/sh), (cw/sw))
+
 	# Saliency
-	box, cropped = saliency_ft(curr)
+	scale_curr = cv2.resize(curr, (sh, sw))
+	box, cropped = saliency_ft(scale_curr)
+
+	# Scale rectangle to original size
+	box.set_height(box.get_height() * scaleh)
+	box.set_width(box.get_width() * scalew)
+	box.set_x(box.get_x() * scaleh)
+	box.set_y(box.get_y() * scalew)
 	
 	# Classify
 	scaled_im = scale(cropped)
@@ -48,31 +48,22 @@ def main():
 
 	box = Rectangle((1,1),1,1)
 	box.set_visible(False)
-
-	# scaled_im = cv2.resize(grab_frame(cap), (32,32))
-	# plt.imshow(scaled_im)
+	currentAxis = plt.gca()
 
 	while plt.get_fignums():
 		curr = grab_frame(cap)
 		im.set_data(curr)
 		box.set_visible(False)
+
 		pure_class = just_classify(curr)
 		sal_class, box = saliency_then_classify(curr)
+
+		currentAxis.add_patch(box)
 		box.set_visible(True)
-		print("Pure classification predicts this object is a " + pure_class)
-		print("Classification with saliency predicts this object is a " + sal_class)
-		print("\n")
-		txt.set_text(sal_class)
 
-
-		# scaled_im = cv2.resize(curr[slice_x, slice_y], (299,299))
-		# variations = preprocess(scaled_im)
-		#print(classify_array(scaled_im))
+		txt.set_text(pure_class)
 
 		plt.pause(0.2)
-
-	# plt.ioff()
-	# plt.show()
 
 if __name__ == "__main__":
 	main()
