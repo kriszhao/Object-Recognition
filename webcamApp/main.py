@@ -88,14 +88,15 @@ def main():
 		curr = grab_frame(cap)
 		im.set_data(curr)
 		box.set_visible(False)
-		print("Pure classification predicts this object is a " + just_classify(curr))
-		print("Classification with saliency predicts this object is a " + saliency_then_classify(curr))
+		pure_class = just_classify(curr)
+		print("Pure classification predicts this object is a " + pure_class)
+		# print("Classification with saliency predicts this object is a " + saliency_then_classify(curr))
 		print("\n")
+		txt.set_text(pure_class
 		box.set_visible(True)
 
 
 		# scaled_im = cv2.resize(curr[slice_x, slice_y], (299,299))
-		txt.set_text("hmmm")
 		# variations = preprocess(scaled_im)
 		#print(classify_array(scaled_im))
 
