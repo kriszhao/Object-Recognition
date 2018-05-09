@@ -2,7 +2,8 @@ import cv2
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 from detect import detect_naive
-from preprocess import preprocess
+from classify import *
+#from preprocess import preprocess
 
 def grab_frame(cap):
     ret,frame = cap.read()
@@ -36,8 +37,9 @@ def main():
 		box, obj = draw_box(curr_gray)
 		box.set_visible(True)
 
-		scaled_im = cv2.resize(obj, (32,32))
-		variations = preprocess(scaled_im)
+		scaled_im = cv2.resize(obj, (299,299))
+		# variations = preprocess(scaled_im)
+		print(classify_array(scaled_im))
 
 		plt.pause(0.2)
 
