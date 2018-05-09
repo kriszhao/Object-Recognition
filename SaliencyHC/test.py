@@ -43,9 +43,9 @@ def test_rc_map(img,n):
     img3i = img3.copy()
     img3f = img3i.astype(np.float32)
     img3f *= 1. / 255
-    sal = SaliencyRC.GetRC(img3f,segK=20,segMinSize=200)
+    #sal = SaliencyRC.GetRC(img3f,segK=20,segMinSize=200)
     start = cv2.getTickCount()
-    #sal = SaliencyRC.GetFT(img3f)
+    sal = SaliencyRC.GetHC(img3f)
     end = cv2.getTickCount()
     print((end - start)/cv2.getTickFrequency())
     np.save("sal.npy",sal)
@@ -93,8 +93,8 @@ def test_rc_map(img,n):
 if __name__ == "__main__":
     np.set_printoptions(threshold=np.nan)
     images = load_images_from_folder("./origin")
-    person = input('Enter your name: ')
-    print('Hello', person)
+    # person = input('Enter your name: ')
+    # print('Hello', person)
     for item in range(len(images)):
-    	test_segmentation(images[item],item)
-    	# test_rc_map(images[item],item)
+    	# test_segmentation(images[item],item)
+    	 test_rc_map(images[item],item)
