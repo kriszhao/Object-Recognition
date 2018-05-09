@@ -39,28 +39,41 @@ def saliency_then_classify(curr):
 	
 	# Classify
 	scaled_im = scale(cropped)
-	return classify_array(scaled_im)
+	return classify_array(scaled_im), box
 
 def main():
 	cap = cv2.VideoCapture(0)
 	im = plt.imshow(grab_frame(cap))
+	txt = plt.text(0,0,"item name", fontsize=12)
 
 	box = Rectangle((1,1),1,1)
 	box.set_visible(False)
 
-	while True:
+	# scaled_im = cv2.resize(grab_frame(cap), (32,32))
+	# plt.imshow(scaled_im)
+
+	while plt.get_fignums():
 		curr = grab_frame(cap)
 		im.set_data(curr)
 		box.set_visible(False)
-		print("Pure classification predicts this object is a " + just_classify(curr))
-		print("Classification with saliency predicts this object is a " + saliency_then_classify(curr))
-		print("\n")
+		pure_class = just_classify(curr)
+		sal_class, box = saliency_then_classify(curr)
 		box.set_visible(True)
+		print("Pure classification predicts this object is a " + pure_class)
+		print("Classification with saliency predicts this object is a " + sal_class)
+		print("\n")
+		txt.set_text(sal_class)
+
+
+		# scaled_im = cv2.resize(curr[slice_x, slice_y], (299,299))
+		# variations = preprocess(scaled_im)
+		#print(classify_array(scaled_im))
 
 		plt.pause(0.2)
 
+	# plt.ioff()
+	# plt.show()
 
 if __name__ == "__main__":
-	# img = cv2.imread('flwr.jpg',0)
-	# draw_box(img)
 	main()
+
