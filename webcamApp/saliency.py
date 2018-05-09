@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+from matplotlib.patches import Rectangle
 
 import SaliencyRC
 
@@ -14,7 +15,11 @@ def process(curr, thresh):
 	x, y, w, h = cv2.boundingRect(contours[-1])
 	target=curr[y+2:y+h-2,x+2:x+w-2]
 
-	return target
+	rect = Rectangle((y+h-2, x+2),\
+		w, h, linewidth=5, \
+		edgecolor="red", fill=False)
+
+	return rect, target
 
 def saliency_ft(curr):
 	modi = curr.copy()
