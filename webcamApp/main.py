@@ -4,7 +4,7 @@ from matplotlib.patches import Rectangle
 from detect import detect_naive
 from classify import *
 import numpy as np
-import SaliencyRC
+from saliency import *
 
 #from preprocess import preprocess
 
@@ -22,38 +22,6 @@ def draw_box(img):
 	currentAxis.add_patch(rect)
 	return rect, coor
 
-def ft_process(curr, thresh):
-	kernel = np.ones((5,5),np.uint8)
-	opening = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
-	kernel = np.ones((15,15),np.uint8)
-	result = cv2.dilate(opening,kernel,iterations = 1)
-
-	_, contours, hierarchy = cv2.findContours(result * 1,cv2.RETR_LIST,cv2.CHAIN_APPROX_SIMPLE)
-	contours = sorted(contours, key = cv2.contourArea)
-	x, y, w, h = cv2.boundingRect(contours[-1])
-	target=curr[y+2:y+h-2,x+2:x+w-2]
-
-	rect = Rectangle((y+2, x+2),\
-	 h, w, linewidth=5, \
-	 edgecolor="red", fill=False)
-
-	return rect, target
-
-def saliency(curr):
-	modi = curr.copy()
-	mod = modi.astype(np.float32)
-	mod *= 1.0 / 255.0
-	sal = SaliencyRC.GetFT(mod)
-	idxs = np.where(sal < (sal.max()+sal.min()) / 5)
-	modi[idxs] = 0
-	sal = sal * 255
-	sal = sal.astype(np.int16)
-
-	imgray = cv2.cvtColor(modi,cv2.COLOR_BGR2GRAY)
-	ret,thresh = cv2.threshold(imgray,1,255,0)
-
-	return ft_process(curr, thresh)
-
 def scale(curr):
 	resized = cv2.resize(curr, (299,299))
 	resized = resized.astype(np.float32)
@@ -67,7 +35,7 @@ def just_classify(curr):
 
 def saliency_then_classify(curr):
 	# Saliency
-	box, cropped = saliency(curr)
+	box, cropped = saliency_ft(curr)
 	
 	# Classify
 	scaled_im = scale(cropped)
