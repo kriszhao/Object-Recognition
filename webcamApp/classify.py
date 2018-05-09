@@ -80,7 +80,7 @@ def classify_array(nparr):
 
     # Run the tensor through the neural network
     results = classify_tensor(t)
-    printProbabilities(results)
+    # printProbabilities(results)
     return getPrediction(results)
 
 def classify_file(file_name):
@@ -95,7 +95,7 @@ def classify_file(file_name):
 
     # Run the tensor through the neural network
     results = classify_tensor(t)
-    printProbabilities(results)
+    # printProbabilities(results)
     return getPrediction(results)
 
 file_base = "images/"

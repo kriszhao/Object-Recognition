@@ -54,56 +54,44 @@ def saliency(curr):
 
 	return ft_process(curr, thresh)
 
-def scale(curr):
-	resized = cv2.resize(curr, (299,299))
-	resized = resized.astype(np.float32)
-	resized *= 1.0 / 255
-	return resized
+def just_classify(file_name):
+	curr = cv2.imread(file_name)
 
-def just_classify(curr):
 	# Classify
-	scaled_im = scale(curr)
+	scaled_im = cv2.resize(curr, (299, 299))
+	scaled_im = scaled_im.astype(np.float32)
+	scaled_im *= 1.0 / 255
+
 	return classify_array(scaled_im)
 
-def saliency_then_classify(curr):
+def saliency_then_classify(file_name):
+	curr = cv2.imread(file_name)
+
 	# Saliency
 	box, cropped = saliency(curr)
+	cv2.imshow(file_name + " cropped", cropped)
+	cv2.imwrite(file_name + "_cropped.jpg", cropped)
 	
 	# Classify
-	scaled_im = scale(cropped)
+	scaled_im = cv2.resize(cropped, (299, 299))
 	return classify_array(scaled_im)
 
+def compare(file_base, file_name):
+	path = file_base + file_name
+
+	print("Pure classification predicts ", file_name, " is a " + just_classify(path))
+	print("Classification with saliency predicts ", file_name, " is a " + saliency_then_classify(path))
+
 def main():
-	cap = cv2.VideoCapture(0)
-	im = plt.imshow(grab_frame(cap))
-	txt = plt.text(0,0,"item name", fontsize=12)
+	file_base = "images/"
+	directory = os.fsencode(file_base)
+	for file in os.listdir(directory):
+		file_name = os.fsdecode(file)
+		if file_name.endswith(".jpg") or file_name.endswith(".png") or file_name.endswith(".gif") or file_name.endswith(".bmp"):
+			compare(file_base, file_name)
 
-	box = Rectangle((1,1),1,1)
-	box.set_visible(False)
-
-	# scaled_im = cv2.resize(grab_frame(cap), (32,32))
-	# plt.imshow(scaled_im)
-
-	while plt.get_fignums():
-		curr = grab_frame(cap)
-		im.set_data(curr)
-		box.set_visible(False)
-		print("Pure classification predicts this object is a " + just_classify(curr))
-		print("Classification with saliency predicts this object is a " + saliency_then_classify(curr))
-		print("\n")
-		box.set_visible(True)
-
-
-		# scaled_im = cv2.resize(curr[slice_x, slice_y], (299,299))
-		txt.set_text("hmmm")
-		# variations = preprocess(scaled_im)
-		#print(classify_array(scaled_im))
-
-		plt.pause(0.2)
-
-	# plt.ioff()
-	# plt.show()
 
 if __name__ == "__main__":
+	# img = cv2.imread('flwr.jpg',0)
+	# draw_box(img)
 	main()
-
